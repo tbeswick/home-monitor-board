@@ -37,7 +37,7 @@
   */
 extern SERIAL_DATA* ser;
 extern WIFI_AT* wifi_con;
-uint32_t ms_at,ms1;
+uint32_t ms_at,ms1,msread;
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -151,20 +151,22 @@ void SysTick_Handler(void)
 	}
 
 	ms1++;
+	msread++;
 
 
 }
 
 
-void USART1_IRQHandler(void){
+void USART1_IRQHandler(void)
+{/*
 	//check the type of interrupt to make sure we have received some data.
 	if( USART_GetITStatus(USART1, USART_IT_RXNE) ){
 		int8_t ch = USART1->DR; //Read the character that we have received
 
 		//ProcessSerialIn(ch);
-		USART_SendData(USART1,(uint16_t)ch);
+		//USART_SendData(USART1,(uint16_t)ch);
 	}
-	/*
+
 	// tx interrupt
 	if( USART_GetITStatus(USART1, USART_IT_TXE) ){
 		if(ser->tx_index < ser->tx_length){
@@ -178,7 +180,8 @@ void USART1_IRQHandler(void){
 }
 
 
-void USART2_IRQHandler(void){
+void USART2_IRQHandler(void)
+{
 	//check the type of interrupt to make sure we have received some data.
 	if( USART_GetITStatus(USART2, USART_IT_RXNE) ){
 		int8_t ch = USART2->DR; //Read the character that we have received

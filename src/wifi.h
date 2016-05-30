@@ -21,9 +21,13 @@ typedef struct{
 }WIFI_AT;
 
 
+
+void WiFiInit(void);
 void ConfigureWifiUsart(uint32_t baudrate);
 void SendAT(char* str);
 void ProcessWiFiResponse(void);
+
+WIFI_RSP RunWifiCommand(char* cmd);
 
 
 #endif /* WIFI_H_ */

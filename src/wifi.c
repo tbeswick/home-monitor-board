@@ -7,9 +7,25 @@
 #include "stm32f4xx.h"
 #include "wifi.h"
 #include <stdlib.h>
-
+#include "utilities.h"
 
 WIFI_AT* wifi_con;
+
+
+
+
+
+WIFI_RSP RunWifiCommand(char* cmd)
+{
+	wifi_con->new_response = 0;
+	wifi_con->rx_index = 0;
+	SendAT(cmd);
+	while(wifi_con->new_response == 0);
+
+	return RSP_OK;
+
+}
+
 
 void SendAT(char* str)
 {
@@ -85,3 +101,17 @@ void ConfigureWifiUsart(uint32_t baudrate)
 	// finally this enables the complete USART2 peripheral
 	USART_Cmd(USART2, ENABLE);
 }
+
+
+void WiFiInit(void)
+{
+
+	RunWifiCommand("AT\r");
+	DelayMs(40);
+	RunWifiCommand("AT+CIPMUX=1\r");
+	DelayMs(40);
+	RunWifiCommand("AT+CIFSR\r");
+	DelayMs(40);
+
+}
+
