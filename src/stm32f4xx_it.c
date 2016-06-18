@@ -158,13 +158,12 @@ void SysTick_Handler(void)
 
 
 void USART1_IRQHandler(void)
-{/*
+{
 	//check the type of interrupt to make sure we have received some data.
 	if( USART_GetITStatus(USART1, USART_IT_RXNE) ){
 		int8_t ch = USART1->DR; //Read the character that we have received
 
-		//ProcessSerialIn(ch);
-		//USART_SendData(USART1,(uint16_t)ch);
+		ProcessSerialIn(ch);
 	}
 
 	// tx interrupt
@@ -175,7 +174,7 @@ void USART1_IRQHandler(void)
 			USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
 		}
 
-	} */
+	}
 
 }
 

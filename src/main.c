@@ -39,6 +39,9 @@ char cmdBuffer[256];
 /* Private macro */
 /* Private variables */
 /* Private function prototypes */
+static void OpenSocket(void);
+static void SendSocketData(char* buff);
+
 WIFI_RSP RunWifiCommand(char* cmd);
 int ms_itoa( char *buf, unsigned int d, int base);
 float ReadClampSensor(void);
@@ -63,10 +66,7 @@ int main(void)
 	RCC_ClocksTypeDef RCC_Clocks;
 
 	char buff[30];
-	char tmp[10];
-	char data_out[100];
-	uint32_t numread;
-	float read_tot;
+
 	float read;
 
 	RCC_GetClocksFreq(&RCC_Clocks);
@@ -88,61 +88,66 @@ int main(void)
 	while (1)
 	{
 
-
-		msread = 0;
-		read_tot = 0;
-		numread = 0;
-		while(msread < 16 * 1000){
-			if(msread % 5000 == 0){
-				read_tot += ReadClampSensor();
-				numread++;
-			}
-		}
-		read = read_tot/numread;
-
-		strcpy(cmdBuffer,"AT+CIPSTART=0,");
-		strcat(cmdBuffer,"\"");
-		strcat(cmdBuffer,PortType);
-		strcat(cmdBuffer,"\",");
-		strcat(cmdBuffer,"\"");
-		strcat(cmdBuffer,PortAddress);
-		strcat(cmdBuffer,"\",");
-		strcat(cmdBuffer,PortNumber);
-		strcat(cmdBuffer,"\r");
-
-		RunWifiCommand(cmdBuffer);
-
-
-
-
+		/* take a e-sensor reading */
+		read = ReadClampSensor();
+		/* convert to char array */
 		ConvertToDecimal(buff,read);
-		strcpy(data_out,AccountId);
-		strcat(data_out,",E=");
-		strcat(data_out,buff);
-		strcat(data_out,"\r\n");
-
-
-		SendUartData(data_out);
-
-		DelayMs(500);
-		strcpy(cmdBuffer,"AT+CIPSEND=0,");
-		ms_itoa(tmp,strlen(data_out),10 );
-		strcat(cmdBuffer,tmp);
-		strcat(cmdBuffer,"\r");
-
-		RunWifiCommand(cmdBuffer);
-		DelayMs(20);
-
-		SendAT(data_out);
-
-		DelayMs(20);
+		/* send to wifi */
+		OpenSocket();
+		SendSocketData(buff);
 
 		RunWifiCommand("AT+CIPCLOSE=0\r");
 
-		DelayMs(2000);
+		DelayMs(1000);
 
 
 	}
+
+}
+
+
+/**
+ * @brief Open socket on WiFi module
+ */
+static void OpenSocket(void)
+{
+	strcpy(cmdBuffer,"AT+CIPSTART=0,");
+	strcat(cmdBuffer,"\"");
+	strcat(cmdBuffer,PortType);
+	strcat(cmdBuffer,"\",");
+	strcat(cmdBuffer,"\"");
+	strcat(cmdBuffer,PortAddress);
+	strcat(cmdBuffer,"\",");
+	strcat(cmdBuffer,PortNumber);
+	strcat(cmdBuffer,"\r");
+
+	RunWifiCommand(cmdBuffer);
+}
+/**
+ * @brief Send char array socket data
+ * @parameter The char array to send
+ */
+static void SendSocketData(char* buff)
+{
+	char data_out[100];
+	char tmp[10];
+
+	strcpy(data_out,AccountId);
+	strcat(data_out,",E=");
+	strcat(data_out,buff);
+	strcat(data_out,"\r\n");
+	DelayMs(100);
+	strcpy(cmdBuffer,"AT+CIPSEND=0,");
+	ms_itoa(tmp,strlen(data_out),10 );
+	strcat(cmdBuffer,tmp);
+	strcat(cmdBuffer,"\r");
+
+
+
+	RunWifiCommand(cmdBuffer);
+
+	SendAT(data_out);
+
 
 }
 

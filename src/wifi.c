@@ -14,7 +14,9 @@ WIFI_AT* wifi_con;
 
 
 
-
+/**
+ *@brief Send command array to module and wait for response (blocking)
+ */
 WIFI_RSP RunWifiCommand(char* cmd)
 {
 	wifi_con->new_response = 0;
@@ -26,10 +28,12 @@ WIFI_RSP RunWifiCommand(char* cmd)
 
 }
 
-
+/**
+ *@brief Send the character array buffer to WiFi Usart (blocking)
+ *@parameter str the char array to send
+ */
 void SendAT(char* str)
 {
-
 
 	while (*str) {
 		while( !(USART2->SR & 0x00000040) );
@@ -50,7 +54,10 @@ void ProcessWiFiResponse(void)
 
 }
 
-
+/**
+ * @brief Configure hardware and pins for WiFi module
+ * @parameter baudrate the module communication baud rate
+ */
 void ConfigureWifiUsart(uint32_t baudrate)
 {
 
@@ -102,7 +109,9 @@ void ConfigureWifiUsart(uint32_t baudrate)
 	USART_Cmd(USART2, ENABLE);
 }
 
-
+/**
+ *@brief Initialise the WiFi module (esp8266)
+ */
 void WiFiInit(void)
 {
 

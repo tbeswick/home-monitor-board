@@ -9,7 +9,9 @@
 #include "adc.h"
 #include <stdlib.h>
 
-
+/**
+ * @brief Hardware set-up for ADC
+ */
 void ADC_Configuration(void)
 {
 
@@ -21,7 +23,7 @@ void ADC_Configuration(void)
 	 //Analog pin configuration
 	 GPIO_initStructre.GPIO_Pin = GPIO_Pin_0;//The channel 10 is connected to PC0
 	 GPIO_initStructre.GPIO_Mode = GPIO_Mode_AN; //The PC0 pin is configured in analog mode
-	 GPIO_initStructre.GPIO_PuPd = GPIO_PuPd_NOPULL; //We don't need any pull up or pull down
+	 GPIO_initStructre.GPIO_PuPd = GPIO_PuPd_UP; //We don't need any pull up or pull down
 	 GPIO_Init(GPIOC,&GPIO_initStructre);//Affecting the port with the initialization structure configuration
 	 //ADC structure configuration
 	 ADC_DeInit();
@@ -40,6 +42,11 @@ void ADC_Configuration(void)
 
 }
 
+
+/**
+ *@brief Run the ADC conversion (blocking)
+ *@return uint16_t 12 bit conversion result
+ */
 uint16_t adc_convert(void)
 {
 	 ADC_SoftwareStartConv(ADC1);//Start the conversion

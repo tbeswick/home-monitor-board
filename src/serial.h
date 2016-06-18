@@ -2,7 +2,7 @@
  * serial.h
  *
  *  Created on: May 21, 2016
- *      Author: Tim
+ *      Author: Tim Beswick
  */
 
 #ifndef SERIAL_H_
